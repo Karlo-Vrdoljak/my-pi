@@ -1,5 +1,8 @@
 import type { ExtensionCommandContext } from '@earendil-works/pi-coding-agent';
-import { scan_imported_skills } from '@spences10/pi-skill-importer';
+import {
+	get_skill_delete_target,
+	scan_imported_skills,
+} from '@spences10/pi-skill-importer';
 import {
 	show_confirm_modal,
 	show_picker_modal,
@@ -121,7 +124,7 @@ async function browse_installed(
 	if (action !== 'delete') return false;
 	const confirmed = await show_confirm_modal(ctx, {
 		title: `Delete ${skill.name}?`,
-		message: `Delete ${skill.baseDir} from disk? This cannot be undone.`,
+		message: `Delete ${get_skill_delete_target(skill) ?? skill.skillPath} from disk? This cannot be undone.`,
 		confirm_label: 'Delete',
 		cancel_label: 'Keep skill',
 	});

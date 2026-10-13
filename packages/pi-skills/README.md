@@ -111,7 +111,9 @@ comparison to `gh skill` instead of maintaining a parallel cache.
 With a UI available, `/skills` opens four task-oriented sections:
 
 - **Installed** — search and enable/disable skills, inspect details,
-  or choose a separately confirmed delete
+  or choose a separately confirmed delete. Delete removes only what
+  the skill owns: the single file for a root Markdown skill, or the
+  dedicated directory for a `<name>/SKILL.md` skill
 - **Available** — reconcile installed `gh skill` inventory with known
   repository trees, preview newly published skills, and dry-run
   updates

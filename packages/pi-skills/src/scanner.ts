@@ -4,6 +4,7 @@ import {
 	find_project_roots,
 	scan_skill_directory,
 	type ScanSkillDirectoryOptions,
+	type SkillOwnership,
 } from '@spences10/pi-skill-importer';
 import { join } from 'node:path';
 
@@ -14,6 +15,7 @@ export interface DiscoveredSkill {
 	description: string;
 	skillPath: string;
 	baseDir: string;
+	ownership?: SkillOwnership;
 	source: string;
 	scope: SkillScope;
 	kind: 'managed';

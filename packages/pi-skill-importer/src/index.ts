@@ -20,9 +20,16 @@ export {
 	dedupe_skills_by_path,
 	find_project_roots,
 	scan_skill_directory,
-	type ScanSkillDirectoryOptions,
 	type ScannedSkill,
+	type ScanSkillDirectoryOptions,
+	type SkillOwnership,
 } from './scanner-primitives.js';
+
+export {
+	delete_owned_skill_resource,
+	get_skill_delete_target,
+	type OwnedSkillResource,
+} from './owned-resource.js';
 
 export {
 	delete_managed_skill as delete_imported_skill,
