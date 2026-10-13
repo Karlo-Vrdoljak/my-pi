@@ -528,7 +528,6 @@ export default async function harness(pi: ExtensionAPI) {
 		promptSnippet:
 			'Enter read-only evidence-gated assessment before adopting broad or risky work',
 		promptGuidelines: [
-			'Call harness_assess before repository mutation when a task may need an enforceable harness contract.',
 			'Call harness_assess by itself; after it activates, use only the remaining read-only tools.',
 		],
 		parameters: harness_assess_params_schema,
@@ -571,10 +570,6 @@ export default async function harness(pi: ExtensionAPI) {
 			'Request an ephemeral /tmp task harness. An approved assessment is required before creation.',
 		promptSnippet:
 			'Request constrained execution only after evidence-gated assessment and direct user approval',
-		promptGuidelines: [
-			'Use harness_assess before harness_create. An unapproved harness_create call is blocked and starts assessment.',
-			'Use the normal direct workflow for bounded, low-risk changes covered by standard validation.',
-		],
 		parameters: harness_create_params_schema,
 		async execute(_tool_call_id, params, _signal, _on_update, ctx) {
 			const state = start_assessment(
@@ -595,10 +590,6 @@ export default async function harness(pi: ExtensionAPI) {
 			'Amend the active execution scaffold with an audited version change. Cannot weaken the outer runtime policy.',
 		promptSnippet:
 			'Amend bounded task scope, validation, test policy, or model strategy when evidence changes',
-		promptGuidelines: [
-			'Use harness_amend for bounded changes to the inner scaffold.',
-			'New capabilities, architecture decisions, or outer-policy expansion require assessment instead of a silent amendment.',
-		],
 		parameters: harness_amend_params_schema,
 		async execute(_tool_call_id, params, _signal, _on_update, ctx) {
 			const contract = amend_harness_runtime(params);

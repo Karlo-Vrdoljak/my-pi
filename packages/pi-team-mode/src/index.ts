@@ -4,7 +4,6 @@ import {
 	handle_team_command,
 	should_inject_team_prompt,
 } from './command-handler.js';
-import { TEAM_PEER_AUTHORITY_GUIDELINES } from './command-utils.js';
 import {
 	get_coordination_db_path,
 	get_current_thinking_level,
@@ -257,17 +256,6 @@ export default async function team_mode(pi: ExtensionAPI) {
 			'Manage peer session coordination, groups, artifacts, and durable mailboxes.',
 		promptSnippet:
 			'Manage peer sessions, coordination groups, artifacts, and messages',
-		promptGuidelines: [
-			...TEAM_PEER_AUTHORITY_GUIDELINES,
-			'Use team session_list for bounded current-project discovery; pass global=true only when cross-project discovery is intentional and include_offline=true only for history.',
-			'If the user mentions standby sessions, existing sessions, handoffs, or other active sessions, call session_list and prefer registered standby sessions.',
-			'Use targeted compact team session_inbox or message_list calls with sender/state filters or message_id; paginate with limit/offset and reserve mode=full for focused bodies.',
-			'Follow Team Mode returned_count, total_count, has_more, and next_offset instead of repeatedly retrieving historical lists.',
-			'Use team session_send, session_read, session_ack, and session_wait for peer-session mailbox coordination.',
-			'Use artifact_create, artifact_get, and artifact_list for larger handoffs, plans, findings, logs, diffs, or results; send artifact ids instead of large mailbox bodies.',
-			'Use team group_create, group_add_session, and group_send when coordinating independently running sessions.',
-			'Use session_list, session_inbox, and group_list as the source of truth for peer-session coordination.',
-		],
 		parameters: TeamToolParams,
 		async execute(
 			_toolCallId,
