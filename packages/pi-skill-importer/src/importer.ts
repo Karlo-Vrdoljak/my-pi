@@ -17,6 +17,7 @@ import {
 	relative,
 	resolve,
 } from 'node:path';
+import { delete_owned_skill_resource } from './owned-resource.js';
 import {
 	IMPORT_METADATA_FILE,
 	scan_importable_skills,
@@ -338,31 +339,9 @@ export function delete_managed_skill(
 	skill: DiscoveredSkill,
 ): DeleteSkillResult {
 	assert_imported_skill(skill);
-	if (!existsSync(skill.baseDir)) {
-		throw new Error(
-			`Skill directory no longer exists: ${skill.baseDir}`,
-		);
-	}
-	if (!existsSync(skill.skillPath)) {
-		throw new Error(
-			`Skill file no longer exists: ${skill.skillPath}`,
-		);
-	}
-	const skill_dir = resolve(skill.baseDir);
-	const skill_file = resolve(skill.skillPath);
-	const relative_skill_path = relative(skill_dir, skill_file);
-	if (
-		!relative_skill_path ||
-		relative_skill_path.startsWith('..') ||
-		isAbsolute(relative_skill_path)
-	) {
-		throw new Error(
-			`Refusing to delete unsafe skill path: ${skill.baseDir}`,
-		);
-	}
-
-	rmSync(skill_dir, { recursive: true, force: true });
-	return { skillDir: skill_dir };
+	return {
+		skillDir: delete_owned_skill_resource(skill).deleted_path,
+	};
 }
 
 export function sync_imported_skill(

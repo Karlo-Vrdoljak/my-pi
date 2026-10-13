@@ -1,6 +1,11 @@
 import { write_package_settings } from '@spences10/pi-settings';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+	existsSync,
+	mkdirSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -21,6 +26,13 @@ function write_skill(
 	writeFileSync(
 		join(base_dir, 'SKILL.md'),
 		`---\nname: ${name}\ndescription: ${description}\n---\n\n# ${name}\n`,
+	);
+}
+
+function write_root_markdown_skill(path: string): void {
+	writeFileSync(
+		path,
+		'---\ndescription: Root Markdown fixture.\n---\n\n# Fixture\n',
 	);
 }
 
@@ -113,6 +125,79 @@ describe('create_skills_manager', () => {
 		expect(
 			skills.find((candidate) => candidate.name === 'root-helper'),
 		).toMatchObject({ source: 'project:.pi/skills' });
+	});
+
+	it.each([
+		{
+			label: 'project',
+			skills_dir: () => join(root, 'repo', '.pi', 'skills'),
+			cwd: () => join(root, 'repo'),
+			source: 'project:.pi/skills',
+		},
+		{
+			label: 'global',
+			skills_dir: () => join(root, 'agent', 'skills'),
+			cwd: () => root,
+			source: 'pi-native',
+		},
+	])(
+		'deletes only the selected $label root Markdown skill',
+		async ({ skills_dir, cwd, source }) => {
+			const dir = skills_dir();
+			mkdirSync(dir, { recursive: true });
+			write_root_markdown_skill(join(dir, 'one.md'));
+			write_root_markdown_skill(join(dir, 'two.md'));
+			writeFileSync(join(dir, 'notes.txt'), 'keep');
+			write_skill(join(dir, 'dedicated'), 'dedicated', 'Dedicated.');
+
+			const { create_skills_manager } = await import('./manager.js');
+			const mgr = create_skills_manager({ cwd: cwd() });
+			const result = mgr.delete_skill(`one@${source}`);
+
+			expect(result).toEqual({
+				key: `one@${source}`,
+				skillDir: dir,
+				deleted_path: join(dir, 'one.md'),
+			});
+			expect(existsSync(join(dir, 'one.md'))).toBe(false);
+			expect(existsSync(join(dir, 'two.md'))).toBe(true);
+			expect(existsSync(join(dir, 'notes.txt'))).toBe(true);
+			expect(existsSync(join(dir, 'dedicated', 'SKILL.md'))).toBe(
+				true,
+			);
+			expect(mgr.discover().map((skill) => skill.name)).toEqual(
+				expect.arrayContaining(['two', 'dedicated']),
+			);
+		},
+	);
+
+	it('deletes a dedicated skill directory with its resources', async () => {
+		const dir = join(root, 'agent', 'skills');
+		write_skill(join(dir, 'dedicated'), 'dedicated', 'Dedicated.');
+		mkdirSync(join(dir, 'dedicated', 'references'));
+		writeFileSync(join(dir, 'dedicated', 'references', 'a.md'), 'a');
+		write_skill(join(dir, 'sibling'), 'sibling', 'Sibling.');
+
+		const { create_skills_manager } = await import('./manager.js');
+		const mgr = create_skills_manager({ cwd: root });
+		const result = mgr.delete_skill('dedicated');
+
+		expect(result.deleted_path).toBe(join(dir, 'dedicated'));
+		expect(existsSync(join(dir, 'dedicated'))).toBe(false);
+		expect(existsSync(join(dir, 'sibling', 'SKILL.md'))).toBe(true);
+	});
+
+	it('keeps the shared directory when SKILL.md sits in the skills root', async () => {
+		const dir = join(root, 'agent', 'skills');
+		write_skill(dir, 'root-skill', 'Root SKILL.md.');
+		write_skill(join(dir, 'sibling'), 'sibling', 'Sibling.');
+
+		const { create_skills_manager } = await import('./manager.js');
+		const mgr = create_skills_manager({ cwd: root });
+		const result = mgr.delete_skill('root-skill');
+
+		expect(result.deleted_path).toBe(join(dir, 'SKILL.md'));
+		expect(existsSync(join(dir, 'sibling', 'SKILL.md'))).toBe(true);
 	});
 
 	it('does not return default pi-native skills as explicit skill paths', async () => {

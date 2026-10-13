@@ -139,7 +139,7 @@ function to_discovered_skill(
 		kind: options.kind,
 		plugin: options.plugin,
 		import_meta:
-			options.kind === 'managed'
+			options.kind === 'managed' && skill.ownership === 'directory'
 				? read_import_metadata(skill.baseDir)
 				: undefined,
 	};

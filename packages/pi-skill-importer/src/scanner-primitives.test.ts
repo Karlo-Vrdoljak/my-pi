@@ -50,7 +50,36 @@ describe('skill scanner primitives', () => {
 				description: 'Direct fixture',
 				skillPath: join(root, 'SKILL.md'),
 				baseDir: root,
+				ownership: 'file',
 			},
+		]);
+	});
+
+	it('marks only dedicated skill directories as directory-owned', () => {
+		const root = make_temp_dir();
+		write_skill(join(root, 'SKILL.md'));
+		write_skill(join(root, 'dedicated', 'SKILL.md'));
+		write_skill(join(root, 'standalone.md'));
+
+		const skills = scan_skill_directory(root, {
+			include_direct_root_skill: false,
+			include_root_markdown_skills: true,
+		});
+
+		expect(
+			skills.map((skill) => [
+				skill.skillPath,
+				skill.baseDir,
+				skill.ownership,
+			]),
+		).toEqual([
+			[
+				join(root, 'dedicated', 'SKILL.md'),
+				join(root, 'dedicated'),
+				'directory',
+			],
+			[join(root, 'SKILL.md'), root, 'file'],
+			[join(root, 'standalone.md'), root, 'file'],
 		]);
 	});
 

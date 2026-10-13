@@ -1,6 +1,6 @@
 import { get_github_repos } from '@spences10/pi-git-remote';
-import { existsSync, rmSync } from 'node:fs';
-import { dirname, isAbsolute, relative, resolve } from 'node:path';
+import { delete_owned_skill_resource } from '@spences10/pi-skill-importer';
+import { dirname, resolve } from 'node:path';
 import {
 	type SkillContextRule,
 	type SkillDefaultPolicy,
@@ -18,7 +18,10 @@ import {
 	scan_project_skills,
 } from './scanner.js';
 export interface DeleteSkillResult {
+	/** Directory that contained the skill; it survives for a file skill. */
 	skillDir: string;
+	/** The file or dedicated directory that was removed. */
+	deleted_path: string;
 }
 
 export const SKILLS_PROFILE_ENV = 'MY_PI_SKILLS_PROFILE';
@@ -467,30 +470,8 @@ export function create_skills_manager(
 				get_managed(),
 				key_or_name,
 			);
-			if (!existsSync(skill.baseDir)) {
-				throw new Error(
-					`Skill directory no longer exists: ${skill.baseDir}`,
-				);
-			}
-			if (!existsSync(skill.skillPath)) {
-				throw new Error(
-					`Skill file no longer exists: ${skill.skillPath}`,
-				);
-			}
-			const skill_dir = resolve(skill.baseDir);
-			const skill_file = resolve(skill.skillPath);
-			const relative_skill_path = relative(skill_dir, skill_file);
-			if (
-				!relative_skill_path ||
-				relative_skill_path.startsWith('..') ||
-				isAbsolute(relative_skill_path)
-			) {
-				throw new Error(
-					`Refusing to delete unsafe skill path: ${skill.baseDir}`,
-				);
-			}
 			const key = resolve_skill_key(skill);
-			rmSync(skill_dir, { recursive: true, force: true });
+			const { deleted_path } = delete_owned_skill_resource(skill);
 			for (const profile of Object.values(config.profiles)) {
 				profile.include = remove_value(profile.include, key);
 				profile.exclude = remove_value(profile.exclude, key);
@@ -498,7 +479,8 @@ export function create_skills_manager(
 			save_skills_config(config);
 			this.refresh();
 			return {
-				skillDir: skill_dir,
+				skillDir: resolve(skill.baseDir),
+				deleted_path,
 				key,
 			};
 		},

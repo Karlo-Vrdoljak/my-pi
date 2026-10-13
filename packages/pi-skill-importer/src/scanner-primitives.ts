@@ -10,11 +10,19 @@ import {
 } from 'node:fs';
 import { basename, dirname, join, parse, resolve } from 'node:path';
 
+/**
+ * What a skill owns on disk. A `directory` skill owns its dedicated
+ * `baseDir`; a `file` skill owns only `skillPath` and shares `baseDir`
+ * with other skills.
+ */
+export type SkillOwnership = 'file' | 'directory';
+
 export interface ScannedSkill {
 	name: string;
 	description: string;
 	skillPath: string;
 	baseDir: string;
+	ownership?: SkillOwnership;
 }
 
 export interface ScanSkillDirectoryOptions {
@@ -62,11 +70,13 @@ export function scan_skill_directory(
 				...parsed,
 				skillPath: direct,
 				baseDir: dir,
+				ownership: 'file',
 			});
 		}
 		return results;
 	}
 
+	const scan_root = resolve(dir);
 	try {
 		const matches = globSync('**/SKILL.md', { cwd: dir });
 		if (options.include_root_markdown_skills) {
@@ -82,10 +92,18 @@ export function scan_skill_directory(
 			const full_path = resolve(dir, match);
 			const parsed = parse_skill_markdown(full_path);
 			if (parsed) {
+				const base_dir = dirname(full_path);
 				results.push({
 					...parsed,
 					skillPath: full_path,
-					baseDir: dirname(full_path),
+					baseDir: base_dir,
+					// The scan root is shared, so a skill file placed directly
+					// in it never owns the directory.
+					ownership:
+						basename(full_path) === 'SKILL.md' &&
+						base_dir !== scan_root
+							? 'directory'
+							: 'file',
 				});
 			}
 		}

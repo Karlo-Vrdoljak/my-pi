@@ -92,6 +92,13 @@ The package also exports `scan_skill_directory`,
 need scanner-compatible discovery without duplicating filesystem
 behavior.
 
+Each scanned skill has an `ownership` value. A `directory` skill owns
+its dedicated `baseDir`. A `file` skill owns only `skillPath`, because
+other skills share its directory. `delete_owned_skill_resource`
+removes only the owned path and rejects a skill with unknown or
+inconsistent ownership. `get_skill_delete_target` returns that path
+for confirmation prompts.
+
 ## Development
 
 <!-- package-readme:development:start commands="check,test" -->
