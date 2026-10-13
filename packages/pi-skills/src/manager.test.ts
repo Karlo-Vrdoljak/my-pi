@@ -4,6 +4,7 @@ import {
 	existsSync,
 	mkdirSync,
 	rmSync,
+	symlinkSync,
 	writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -198,6 +199,24 @@ describe('create_skills_manager', () => {
 
 		expect(result.deleted_path).toBe(join(dir, 'SKILL.md'));
 		expect(existsSync(join(dir, 'sibling', 'SKILL.md'))).toBe(true);
+	});
+
+	it('discovers a global skill whose directory is a symlink', async () => {
+		const source = join(root, 'skill-sources', 'linked');
+		write_skill(source, 'linked', 'Linked skill.');
+		mkdirSync(join(root, 'agent', 'skills'), { recursive: true });
+		symlinkSync(
+			source,
+			join(root, 'agent', 'skills', 'linked'),
+			'dir',
+		);
+
+		const { create_skills_manager } = await import('./manager.js');
+		const mgr = create_skills_manager({ cwd: root });
+
+		expect(mgr.discover().map((skill) => skill.key)).toContain(
+			'linked@pi-native',
+		);
 	});
 
 	it('does not return default pi-native skills as explicit skill paths', async () => {

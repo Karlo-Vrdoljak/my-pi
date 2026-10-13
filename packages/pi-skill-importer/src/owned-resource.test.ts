@@ -3,6 +3,7 @@ import {
 	mkdirSync,
 	mkdtempSync,
 	rmSync,
+	symlinkSync,
 	writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -64,6 +65,20 @@ describe('delete_owned_skill_resource', () => {
 
 		expect(existsSync(join(dir, 'dedicated'))).toBe(false);
 		expect(existsSync(join(dir, 'one.md'))).toBe(true);
+	});
+
+	it('removes only the link of a symlinked skill directory', () => {
+		const dir = make_skills_dir();
+		symlinkSync(join(dir, 'dedicated'), join(dir, 'linked'), 'dir');
+
+		delete_owned_skill_resource({
+			skillPath: join(dir, 'linked', 'SKILL.md'),
+			baseDir: join(dir, 'linked'),
+			ownership: 'directory',
+		});
+
+		expect(existsSync(join(dir, 'linked'))).toBe(false);
+		expect(existsSync(join(dir, 'dedicated', 'SKILL.md'))).toBe(true);
 	});
 
 	it('reports no delete target when ownership is unknown', () => {

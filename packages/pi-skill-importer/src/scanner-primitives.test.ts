@@ -2,6 +2,7 @@ import {
 	mkdirSync,
 	mkdtempSync,
 	rmSync,
+	symlinkSync,
 	writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -98,6 +99,47 @@ describe('skill scanner primitives', () => {
 		expect(skills.map((skill) => skill.name)).toEqual([
 			'alpha',
 			'standalone',
+		]);
+	});
+
+	it('finds skills in symlinked directories without looping', () => {
+		const root = make_temp_dir();
+		const source = join(make_temp_dir(), 'linked');
+		write_skill(join(source, 'SKILL.md'));
+		symlinkSync(source, join(root, 'linked'), 'dir');
+		symlinkSync(root, join(source, 'back'), 'dir');
+
+		expect(
+			scan_skill_directory(root, {
+				include_direct_root_skill: false,
+			}),
+		).toEqual([
+			{
+				name: 'linked',
+				description: 'Scanner fixture',
+				skillPath: join(root, 'linked', 'SKILL.md'),
+				baseDir: join(root, 'linked'),
+				ownership: 'directory',
+			},
+		]);
+	});
+
+	it('keeps the earlier search scope for nested and hidden directories', () => {
+		const root = make_temp_dir();
+		write_skill(join(root, 'a', 'SKILL.md'));
+		write_skill(join(root, 'a', 'b', 'SKILL.md'));
+		write_skill(join(root, 'node_modules', 'x', 'SKILL.md'));
+		write_skill(join(root, '.hidden', 'SKILL.md'));
+		write_skill(join(root, 'a', 'skill.md'));
+
+		expect(
+			scan_skill_directory(root, {
+				include_direct_root_skill: false,
+			}).map((skill) => skill.skillPath),
+		).toEqual([
+			join(root, 'a', 'b', 'SKILL.md'),
+			join(root, 'a', 'SKILL.md'),
+			join(root, 'node_modules', 'x', 'SKILL.md'),
 		]);
 	});
 
