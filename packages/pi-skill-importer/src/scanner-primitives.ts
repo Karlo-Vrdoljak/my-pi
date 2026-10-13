@@ -5,7 +5,9 @@ import {
 import {
 	existsSync,
 	globSync,
+	readdirSync,
 	readFileSync,
+	realpathSync,
 	statSync,
 } from 'node:fs';
 import { basename, dirname, join, parse, resolve } from 'node:path';
@@ -52,6 +54,46 @@ function parse_skill_markdown(
 	}
 }
 
+/**
+ * Relative paths of every SKILL.md below `dir`. Follows symlinked
+ * directories, as Pi does when it loads skills, and skips hidden
+ * directories. Each real directory is visited once, so a link cycle ends.
+ */
+function find_skill_files(dir: string): string[] {
+	const matches: string[] = [];
+	const visited = new Set<string>();
+
+	const walk = (current: string, relative_dir: string): void => {
+		let real_path: string;
+		try {
+			real_path = realpathSync(current);
+		} catch {
+			return;
+		}
+		if (visited.has(real_path)) return;
+		visited.add(real_path);
+
+		for (const entry of readdirSync(current, {
+			withFileTypes: true,
+		})) {
+			const relative_path = join(relative_dir, entry.name);
+			const full_path = join(current, entry.name);
+			if (entry.name === 'SKILL.md') {
+				if (is_file(full_path)) matches.push(relative_path);
+			} else if (
+				!entry.name.startsWith('.') &&
+				(entry.isDirectory() || entry.isSymbolicLink()) &&
+				is_directory(full_path)
+			) {
+				walk(full_path, relative_path);
+			}
+		}
+	};
+
+	walk(dir, '');
+	return matches;
+}
+
 export function scan_skill_directory(
 	dir: string,
 	options: ScanSkillDirectoryOptions = {},
@@ -78,7 +120,7 @@ export function scan_skill_directory(
 
 	const scan_root = resolve(dir);
 	try {
-		const matches = globSync('**/SKILL.md', { cwd: dir });
+		const matches = find_skill_files(dir);
 		if (options.include_root_markdown_skills) {
 			matches.push(
 				...globSync('*.md', { cwd: dir }).filter(
@@ -138,6 +180,14 @@ function parent_dir(path: string): string | null {
 function is_directory(path: string): boolean {
 	try {
 		return statSync(path).isDirectory();
+	} catch {
+		return false;
+	}
+}
+
+function is_file(path: string): boolean {
+	try {
+		return statSync(path).isFile();
 	} catch {
 		return false;
 	}
