@@ -159,6 +159,14 @@ The extension registers LSP-backed Pi tools for:
 These tools let the model inspect types, find usages, and catch
 diagnostics without guessing from text search alone.
 
+A diagnostics result is clean only when the language server supplied
+an empty list for the current document. If the server sends nothing
+before `wait_ms` expires, the tool reports `validation incomplete`,
+and `lsp_diagnostics_many` counts the file as `incomplete` and not as
+`clean`. An incomplete result is not a pass: retry with a larger
+`wait_ms` or use another check. Diagnostics for a closed document or
+an earlier document version are ignored.
+
 ## Model reminder
 
 When LSP tools are active, the extension reminds the model to use LSP
