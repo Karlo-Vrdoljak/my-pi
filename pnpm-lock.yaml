@@ -286,7 +286,7 @@ catalogs:
       version: 3.1.0
     wrangler:
       specifier: ^4.118.0
-      version: 4.149.0
+      version: 4.150.0
   typescript6:
     typescript:
       specifier: ^6.0.3
@@ -436,7 +436,7 @@ importers:
         version: 1.64.0
       '@sveltejs/adapter-cloudflare':
         specifier: 'catalog:'
-        version: 8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3))(wrangler@4.149.0(@types/node@25.9.9))
+        version: 8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3))(wrangler@4.150.0(@types/node@25.9.9))
       '@sveltejs/kit':
         specifier: 'catalog:'
         version: 3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3)
@@ -517,7 +517,7 @@ importers:
         version: 3.1.0(svelte@5.57.2)(vitest@5.0.1)
       wrangler:
         specifier: 'catalog:'
-        version: 4.149.0(@types/node@25.9.9)
+        version: 4.150.0(@types/node@25.9.9)
 
   packages/pi-child-env:
     devDependencies:
@@ -3464,8 +3464,8 @@ packages:
     engines: {node: '>= 20'}
     hasBin: true
 
-  miniflare@5.20261006.1-alpha:
-    resolution: {integrity: sha512-6ylv8tamkrspDI2R/cAYfv+YWmfGNdXe76Pi9TauEUWsFVXn3LNF9Yk8oduzf1a+TYsSRYTqlOE7+nGGRsMHdw==}
+  miniflare@5.20261006.2-beta:
+    resolution: {integrity: sha512-agufWI3mXF8xGzry2/sOF8Im8AoYs04DWBCLDWDmd4QtMSGEo9IgrPmYOwsCmQA3K3MbLzsvr01GpWc8x3Duqw==}
     engines: {node: '>=22.0.0'}
 
   minimatch@10.2.6:
@@ -3951,8 +3951,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.149.0:
-    resolution: {integrity: sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==}
+  wrangler@4.150.0:
+    resolution: {integrity: sha512-Mf3MiCoGXszX965MtKcOSe8whSyFBL2qpCp+DiSwH94+0FNYveSPQPVRRlMAMH8lkln8PECcSW1do6hnelwPZA==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
@@ -5011,12 +5011,12 @@ snapshots:
     dependencies:
       acorn: 8.18.0
 
-  '@sveltejs/adapter-cloudflare@8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3))(wrangler@4.149.0(@types/node@25.9.9))':
+  '@sveltejs/adapter-cloudflare@8.0.0(@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3))(wrangler@4.150.0(@types/node@25.9.9))':
     dependencies:
       '@cloudflare/workers-types': 5.20261001.1
       '@rolldown/pluginutils': 1.0.1
       '@sveltejs/kit': 3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3)
-      wrangler: 4.149.0(@types/node@25.9.9)
+      wrangler: 4.150.0(@types/node@25.9.9)
 
   '@sveltejs/kit@3.0.1(@opentelemetry/api@1.9.0)(@sveltejs/vite-plugin-svelte@7.3.1(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2))(@voidzero-dev/vite-plus-core@1.1.0(@types/node@25.9.9)(esbuild@0.28.2)(jiti@2.7.0)(typescript@6.0.3)(yaml@2.9.0))(svelte@5.57.2)(typescript@6.0.3)':
     dependencies:
@@ -6069,7 +6069,7 @@ snapshots:
 
   marked@18.0.11: {}
 
-  miniflare@5.20261006.1-alpha(@types/node@25.9.9):
+  miniflare@5.20261006.2-beta(@types/node@25.9.9):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.35.5(@types/node@25.9.9)
@@ -6923,13 +6923,13 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20261006.1
       '@cloudflare/workerd-windows-64': 1.20261006.1
 
-  wrangler@4.149.0(@types/node@25.9.9):
+  wrangler@4.150.0(@types/node@25.9.9):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261006.1)
       blake3-wasm: 2.1.5
       esbuild: 0.28.2
-      miniflare: 5.20261006.1-alpha(@types/node@25.9.9)
+      miniflare: 5.20261006.2-beta(@types/node@25.9.9)
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.24
       workerd: 1.20261006.1
