@@ -1,5 +1,12 @@
 # my-pi
 
+## 0.3.5
+
+### Patch Changes
+
+- b417e6a: Update Pi to 1.3.0 to fix startup failures from mismatched
+  codemode dependencies.
+
 ## 0.3.4
 
 No changes in this release.
