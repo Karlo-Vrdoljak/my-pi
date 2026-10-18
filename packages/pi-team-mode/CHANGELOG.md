@@ -1,5 +1,13 @@
 # @spences10/pi-team-mode
 
+## 0.0.58
+
+### Patch Changes
+
+- b07ea54: Remove tool prompt guidelines that repeated the harness and
+  Team Mode system prompt sections, which reduces the default request
+  size.
+
 ## 0.0.57
 
 ### Patch Changes
