@@ -1,5 +1,18 @@
 # @spences10/pi-skills
 
+## 0.0.37
+
+### Patch Changes
+
+- e88f070: Delete only the file or dedicated directory that the
+  selected skill owns, so sibling root Markdown skills are preserved.
+- 9916c4d: Find skills whose directories are symlinks or junctions;
+  thanks @pring-nt for reporting
+  [#583](https://github.com/spences10/my-pi/issues/583).
+- Updated dependencies [e88f070]
+- Updated dependencies [9916c4d]
+  - @spences10/pi-skill-importer@0.0.14
+
 ## 0.0.36
 
 ### Patch Changes
