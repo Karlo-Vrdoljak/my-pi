@@ -77,6 +77,19 @@ Supported server discovery includes:
 - Ruby via `solargraph`
 - Java via `jdtls`
 - Lua via `lua-language-server`
+- JSON / JSONC via `vscode-json-language-server --stdio`
+- YAML / YML via `yaml-language-server --stdio`
+
+Install the configuration-file servers globally with
+`volta install vscode-langservers-extracted yaml-language-server`, or
+add their packages as project-local development dependencies.
+
+JSON validates against an explicit `$schema`; JSONC also permits
+comments. YAML accepts a schema directive, for example
+`# yaml-language-server: $schema=./schema.json`. Schema files may be
+local or remote; remote schemas require network access. Syntax checks
+still work without a schema. JavaScript and React files use their
+actual LSP document language, while sharing the TypeScript server.
 
 The TypeScript backend is selected by capability. A project-local
 TypeScript installation takes priority. TypeScript 7 without
@@ -231,6 +244,13 @@ pnpm --filter @spences10/pi-lsp run build
 ```
 
 <!-- package-readme:development:end -->
+
+With the global configuration-file and TypeScript servers installed,
+run the opt-in real-server tests:
+
+```bash
+MY_PI_LSP_CONFIG_INTEGRATION=1 pnpm --filter @spences10/pi-lsp run test
+```
 
 ## License
 

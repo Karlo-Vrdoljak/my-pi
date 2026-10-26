@@ -87,6 +87,27 @@ describe('TypeScript 7 native LSP integration', () => {
 				await state.client.document_symbols(uri),
 			).not.toHaveLength(0);
 			await manager.release_file_state(resolved.result);
+
+			const js_file = join(workspace, 'src', 'check.js');
+			writeFileSync(
+				js_file,
+				'// @ts-check\n/** @type {number} */\nexport const count = "wrong";\n',
+			);
+			const js_resolved = await manager.resolve_file_state(
+				js_file,
+				ctx,
+			);
+			expect(js_resolved.ok).toBe(true);
+			if (!js_resolved.ok) throw new Error(js_resolved.error.message);
+			const js_diagnostics =
+				await js_resolved.result.state.client.wait_for_diagnostics(
+					js_resolved.result.uri,
+					5_000,
+				);
+			expect(js_diagnostics?.some((item) => item.code === 2322)).toBe(
+				true,
+			);
+			await manager.release_file_state(js_resolved.result);
 		} finally {
 			await manager.clear_language_state();
 			if (previous_trust === undefined) {

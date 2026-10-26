@@ -41,6 +41,10 @@ const EXTENSION_LANGUAGES: Record<string, string> = {
 	'.java': 'java',
 	'.lua': 'lua',
 	'.svelte': 'svelte',
+	'.json': 'json',
+	'.jsonc': 'json',
+	'.yaml': 'yaml',
+	'.yml': 'yaml',
 };
 
 const LANGUAGE_SERVERS: Record<string, LspServerConfig> = {
@@ -99,6 +103,20 @@ const LANGUAGE_SERVERS: Record<string, LspServerConfig> = {
 		args: ['--stdio'],
 		install_hint:
 			'Install Svelte LSP with: pnpm add -D svelte-language-server (or volta install svelte-language-server)',
+	},
+	json: {
+		language: 'json',
+		command: 'vscode-json-language-server',
+		args: ['--stdio'],
+		install_hint:
+			'Install JSON LSP with: volta install vscode-langservers-extracted',
+	},
+	yaml: {
+		language: 'yaml',
+		command: 'yaml-language-server',
+		args: ['--stdio'],
+		install_hint:
+			'Install YAML LSP with: volta install yaml-language-server',
 	},
 };
 
@@ -225,7 +243,20 @@ export function get_server_config(
 export function language_id_for_file(
 	file_path: string,
 ): string | undefined {
-	return detect_language(file_path);
+	switch (extname(file_path).toLowerCase()) {
+		case '.js':
+		case '.mjs':
+		case '.cjs':
+			return 'javascript';
+		case '.jsx':
+			return 'javascriptreact';
+		case '.tsx':
+			return 'typescriptreact';
+		case '.jsonc':
+			return 'jsonc';
+		default:
+			return detect_language(file_path);
+	}
 }
 
 export function find_workspace_root(

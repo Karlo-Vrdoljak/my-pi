@@ -13,6 +13,7 @@ import {
 	find_workspace_root,
 	get_server_config,
 	list_supported_languages,
+	language_id_for_file,
 	resolve_server_command,
 	resolve_server_command_info,
 } from './servers.js';
@@ -32,8 +33,32 @@ describe('detect_language', () => {
 		expect(detect_language('main.py')).toBe('python');
 	});
 
+	it.each([
+		['settings.json', 'json'],
+		['settings.jsonc', 'json'],
+		['workflow.yml', 'yaml'],
+		['workflow.YAML', 'yaml'],
+	])('maps %s to the %s server', (file, language) => {
+		expect(detect_language(file)).toBe(language);
+	});
 	it('returns undefined for unknown extensions', () => {
 		expect(detect_language('README.md')).toBeUndefined();
+	});
+});
+describe('language_id_for_file', () => {
+	it.each([
+		['file.ts', 'typescript'],
+		['file.tsx', 'typescriptreact'],
+		['file.js', 'javascript'],
+		['file.jsx', 'javascriptreact'],
+		['file.mjs', 'javascript'],
+		['file.cjs', 'javascript'],
+		['settings.json', 'json'],
+		['settings.jsonc', 'jsonc'],
+		['workflow.yml', 'yaml'],
+		['file:///repo/component.JSX', 'javascriptreact'],
+	])('sends the document language for %s', (file, language) => {
+		expect(language_id_for_file(file)).toBe(language);
 	});
 });
 
@@ -42,12 +67,14 @@ describe('list_supported_languages', () => {
 		expect(list_supported_languages()).toEqual([
 			'go',
 			'java',
+			'json',
 			'lua',
 			'python',
 			'ruby',
 			'rust',
 			'svelte',
 			'typescript',
+			'yaml',
 		]);
 	});
 });
@@ -121,6 +148,33 @@ describe('find_workspace_root', () => {
 });
 
 describe('get_server_config', () => {
+	it.each([
+		['json', 'vscode-json-language-server'],
+		['yaml', 'yaml-language-server'],
+	])(
+		'resolves the %s server with the existing local/global policy',
+		(language, command) => {
+			const cwd = mkdtempSync(join(tmpdir(), 'my-pi-lsp-'));
+			dirs.push(cwd);
+			expect(get_server_config(language, cwd)).toMatchObject({
+				language,
+				command,
+				args: ['--stdio'],
+				is_project_local: false,
+			});
+			mkdirSync(join(cwd, 'node_modules', '.bin'), {
+				recursive: true,
+			});
+			const binary = join(cwd, 'node_modules', '.bin', command);
+			writeFileSync(binary, '#!/bin/sh\n', { mode: 0o755 });
+			expect(get_server_config(language, cwd)?.command).toBe(binary);
+			expect(
+				get_server_config(language, cwd, {
+					allow_project_local: false,
+				})?.command,
+			).toBe(command);
+		},
+	);
 	it('selects the project-local TypeScript 7 native LSP', () => {
 		const cwd = mkdtempSync(join(tmpdir(), 'my-pi-lsp-'));
 		dirs.push(cwd);
